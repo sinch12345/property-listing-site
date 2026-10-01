@@ -5,44 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nestora | Find a place that feels like home</title>
   <meta name="description" content="Search homes by neighborhood, budget and vibe.">
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <div class="curtain"></div>
 
-  <!-- ===== HEADER ===== -->
-  <header class="site-header">
-    <a href="#top" class="logo">Nest<span>ora</span></a>
-    <nav class="nav">
-      <a href="#listings">Homes</a>
-      <a href="#neighborhoods">Neighborhoods</a>
-      <a href="#why">Why Nestora</a>
-      <a href="#favorites" id="favLink">Saved <span class="fav-count" id="favCount">0</span></a>
-    </nav>
-    <a href="#contact" class="btn btn-accent">List a property</a>
-  </header>
-
-  <main id="top">
-
-    <!-- ===== HERO ===== -->
+  <main>
+    <!-- HERO -->
     <section class="hero">
       <div class="hero-text">
-        <p class="eyebrow">Homes with character</p>
-        <h1>Find a place that <em>feels</em> like home</h1>
-        <p class="hero-sub">Search by neighborhood, budget and vibe. Because a home is more than square feet.</p>
-        <div class="hero-actions">
-          <a href="#listings" class="btn btn-primary">Browse homes</a>
-          <a href="#neighborhoods" class="btn btn-ghost">Explore areas</a>
+        <p class="eyebrow reveal" style="--d:.5s">Homes with character</p>
+        <h1 class="reveal" style="--d:.65s">Find a place that <em>feels</em> like home</h1>
+        <p class="hero-sub reveal" style="--d:.8s">Search by neighborhood, budget and vibe. Because a home is more than square feet.</p>
+        <div class="hero-actions reveal" style="--d:.95s">
+          <a href="listings.html" class="btn btn-primary">Browse homes</a>
+          <a href="neighborhoods.html" class="btn btn-ghost">Explore areas</a>
         </div>
       </div>
 
-      <div class="hero-visual">
-        <div class="arch hero-arch" id="heroArch">
-          <!-- Later: replace with <img src="images/hero.jpg" alt="..."> -->
-        </div>
+      <div class="hero-visual reveal" style="--d:.7s">
+        <div class="arch hero-arch"></div>
         <div class="badge badge-stat">
           <strong>1,200+</strong>
           <span>homes matched to a vibe</span>
@@ -51,12 +36,12 @@
       </div>
     </section>
 
-    <!-- ===== SEARCH PANEL ===== -->
-    <section class="search-wrap">
-      <form class="search-panel" id="searchForm">
+    <!-- SEARCH: sends the choices to listings.html (we read them in Step 8) -->
+    <section class="search-wrap reveal" style="--d:1.1s">
+      <form class="search-panel" id="searchForm" action="listings.html" method="get">
         <label class="field">
           <span>Neighborhood</span>
-          <select id="fLocation">
+          <select name="location" id="fLocation">
             <option value="">Anywhere</option>
             <option>Lakeside</option>
             <option>Old Town</option>
@@ -67,7 +52,7 @@
 
         <label class="field">
           <span>Type</span>
-          <select id="fType">
+          <select name="type" id="fType">
             <option value="">Any type</option>
             <option>Apartment</option>
             <option>Villa</option>
@@ -78,7 +63,7 @@
 
         <label class="field">
           <span>Max budget</span>
-          <select id="fBudget">
+          <select name="budget" id="fBudget">
             <option value="">No limit</option>
             <option value="200000">$200,000</option>
             <option value="400000">$400,000</option>
@@ -89,7 +74,7 @@
 
         <label class="field">
           <span>Vibe</span>
-          <select id="fVibe">
+          <select name="vibe" id="fVibe">
             <option value="">Any vibe</option>
             <option>Sunlit mornings</option>
             <option>Quiet street</option>
@@ -103,99 +88,21 @@
       </form>
     </section>
 
-    <!-- ===== LISTINGS ===== -->
-    <section class="listings" id="listings">
-      <div class="section-head">
+    <!-- FEATURED -->
+    <section class="listings">
+      <div class="section-head reveal">
         <div>
           <p class="eyebrow">Fresh on the market</p>
           <h2>Homes you might fall for</h2>
         </div>
-        <label class="sort">
-          <span>Sort by</span>
-          <select id="sortBy">
-            <option value="newest">Newest</option>
-            <option value="priceLow">Price: low to high</option>
-            <option value="priceHigh">Price: high to low</option>
-          </select>
-        </label>
+        <a href="listings.html" class="btn btn-ghost">View all homes</a>
       </div>
-
-      <p class="result-count" id="resultCount"></p>
-
-      <!-- JavaScript will fill this grid with property cards -->
-      <div class="grid" id="propertyGrid"></div>
+      <!-- Cards arrive in Step 7 -->
+      <div class="grid" id="propertyGrid" data-limit="3"></div>
     </section>
-
-    <!-- ===== NEIGHBORHOODS ===== -->
-    <section class="neighborhoods" id="neighborhoods">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Know the area</p>
-          <h2>Browse by neighborhood</h2>
-        </div>
-      </div>
-      <div class="hood-strip" id="hoodStrip">
-        <article class="hood" data-area="Lakeside">
-          <h3>Lakeside</h3>
-          <p>Morning walks and quiet evenings by the water.</p>
-        </article>
-        <article class="hood" data-area="Old Town">
-          <h3>Old Town</h3>
-          <p>Cafés, markets and homes with history.</p>
-        </article>
-        <article class="hood" data-area="Hillcrest">
-          <h3>Hillcrest</h3>
-          <p>Space, greenery and city views from above.</p>
-        </article>
-        <article class="hood" data-area="Harbour">
-          <h3>Harbour</h3>
-          <p>Fresh air, open skies and weekend energy.</p>
-        </article>
-      </div>
-    </section>
-
-    <!-- ===== WHY US ===== -->
-    <section class="why" id="why">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Why Nestora</p>
-          <h2>Search the way you actually live</h2>
-        </div>
-      </div>
-      <div class="why-grid">
-        <article class="why-card">
-          <span class="why-num">01</span>
-          <h3>Vibe-first search</h3>
-          <p>Tell us how you want to feel at home, and we'll show matching places.</p>
-        </article>
-        <article class="why-card">
-          <span class="why-num">02</span>
-          <h3>Real monthly cost</h3>
-          <p>Every home shows an estimated monthly payment, not just a big number.</p>
-        </article>
-        <article class="why-card">
-          <span class="why-num">03</span>
-          <h3>Honest neighborhoods</h3>
-          <p>Short, human descriptions of what each area is really like.</p>
-        </article>
-      </div>
-    </section>
-
   </main>
 
-  <!-- ===== FOOTER ===== -->
-  <footer class="site-footer" id="contact">
-    <h2>Ready to find <em>your</em> place?</h2>
-    <p>hello@nestora.example &nbsp;·&nbsp; +00 000 000 0000</p>
-    <div class="footer-bottom">
-      <span>© 2026 Nestora. All rights reserved.</span>
-      <span>Built from scratch with HTML, CSS and JavaScript.</span>
-    </div>
-  </footer>
-
-  <!-- Property detail modal (filled by JavaScript later) -->
-  <div class="modal" id="modal" hidden></div>
-
+  <script src="js/layout.js"></script>
   <script src="js/data.js"></script>
   <script src="js/main.js"></script>
 </body>

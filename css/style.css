@@ -455,3 +455,223 @@ h3 {
     grid-column: 1 / -1;
   }
 }
+
+
+
+/* ===== Arch curtain page transition ===== */
+.curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  pointer-events: none;
+  background: var(--forest);
+  border-radius: 50% 50% 0 0 / 22% 22% 0 0;
+  /* on page load the curtain is covering, then slides away */
+  animation: curtainOut 0.8s cubic-bezier(.7, 0, .3, 1) 0.1s forwards;
+}
+
+@keyframes curtainOut {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-110%); }
+}
+
+@keyframes curtainIn {
+  from { transform: translateY(110%); }
+  to   { transform: translateY(0); }
+}
+
+/* ===== Scroll reveal ===== */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(.2, .7, .2, 1);
+  transition-delay: var(--d, 0s);
+}
+
+.reveal.in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .curtain { display: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .badge { animation: none; }
+}
+
+/* ===== Active nav link ===== */
+.nav a.active {
+  color: var(--terracotta);
+}
+
+.nav a.active::after {
+  width: 100%;
+}
+
+/* ===== Inner page heading ===== */
+.page-hero {
+  padding-top: 70px;
+  padding-bottom: 20px;
+}
+
+.page-hero h1 {
+  font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+  margin-bottom: 20px;
+  max-width: 800px;
+}
+
+/* ===== Neighborhood cards ===== */
+.hood-strip {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px;
+}
+
+.hood {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 44px 36px 32px;
+  background: var(--sage);
+  border-radius: 200px 200px 28px 28px;
+  text-align: center;
+  align-items: center;
+  transition: transform 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
+}
+
+.hood:nth-child(2) { background: #F0DDB0; }
+.hood:nth-child(3) { background: #EBC9BC; }
+.hood:nth-child(4) { background: #CFDCD3; }
+
+.hood:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow);
+}
+
+.hood-num {
+  font-family: var(--font-heading);
+  font-style: italic;
+  color: var(--terracotta);
+}
+
+.hood h3 {
+  font-size: 1.9rem;
+}
+
+.hood p {
+  max-width: 280px;
+  color: rgba(30, 42, 36, 0.75);
+}
+
+.hood-link {
+  margin-top: 12px;
+  font-weight: 700;
+  color: var(--forest);
+}
+
+/* ===== Why cards ===== */
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+.why-card {
+  padding: 36px 30px;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: transform 0.35s ease;
+}
+
+.why-card:hover {
+  transform: translateY(-6px);
+}
+
+.why-num {
+  display: block;
+  margin-bottom: 18px;
+  font-family: var(--font-heading);
+  font-size: 2.4rem;
+  font-style: italic;
+  color: var(--gold);
+}
+
+.why-card h3 {
+  margin-bottom: 10px;
+}
+
+.why-card p {
+  color: rgba(30, 42, 36, 0.75);
+}
+
+/* ===== Footer ===== */
+.site-footer {
+  margin-top: 80px;
+  padding: 80px 5vw 30px;
+  background: var(--forest);
+  color: var(--paper);
+  text-align: center;
+  border-radius: 80px 80px 0 0;
+}
+
+.site-footer h2 {
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  margin-bottom: 16px;
+}
+
+.site-footer em {
+  color: var(--gold);
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 60px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(246, 240, 230, 0.2);
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+
+/* ===== Misc ===== */
+.result-count {
+  color: rgba(30, 42, 36, 0.7);
+  font-weight: 500;
+}
+
+.sort {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+}
+
+.sort select {
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(31, 61, 47, 0.25);
+  background: var(--white);
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+.empty-note {
+  text-align: center;
+  padding: 40px 0;
+  font-size: 1.1rem;
+}
+
+.empty-note a {
+  color: var(--terracotta);
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .hood-strip,
+  .why-grid {
+    grid-template-columns: 1fr;
+  }
+}

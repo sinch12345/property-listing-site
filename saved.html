@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saved homes | Nestora</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="curtain"></div>
+
+  <main>
+    <section class="page-hero">
+      <p class="eyebrow reveal" style="--d:.5s">Your shortlist</p>
+      <h1 class="reveal" style="--d:.65s">Homes you <em>saved</em></h1>
+      <p class="hero-sub reveal" style="--d:.8s">Tap the heart on any home to keep it here.</p>
+    </section>
+
+    <section class="listings">
+      <div class="grid" id="propertyGrid"></div>
+      <p class="empty-note" id="emptyNote">Nothing saved yet. <a href="listings.html">Browse homes →</a></p>
+    </section>
+  </main>
+
+  <script src="js/layout.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
