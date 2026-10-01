@@ -675,3 +675,167 @@ h3 {
     grid-template-columns: 1fr;
   }
 }
+
+/* ===== Property grid (uneven on purpose) ===== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px 32px;
+  align-items: start;
+}
+
+.grid .card:nth-child(3n + 2) {
+  margin-top: 48px;
+}
+
+/* ===== Property card ===== */
+.card {
+  position: relative;
+}
+
+.card-arch {
+  position: relative;
+  aspect-ratio: 4 / 4.6;
+  box-shadow: var(--shadow);
+  transition: transform 0.4s cubic-bezier(.2, .7, .2, 1), box-shadow 0.4s ease;
+}
+
+.card:hover .card-arch {
+  transform: translateY(-8px);
+  box-shadow: 0 22px 44px rgba(31, 61, 47, 0.25);
+}
+
+.card-art {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s ease;
+}
+
+.card:hover .card-art,
+.card:hover .card-arch img {
+  transform: scale(1.06);
+}
+
+/* price tag sits over the bottom edge of the arch */
+.price-tag {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--forest);
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 600;
+  box-shadow: var(--shadow);
+}
+
+/* heart button */
+.heart {
+  position: absolute;
+  top: 18%;
+  right: 12%;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s ease;
+}
+
+.heart:hover {
+  transform: scale(1.12);
+}
+
+.heart svg {
+  width: 22px;
+  height: 22px;
+  fill: transparent;
+  stroke: var(--forest);
+  stroke-width: 2;
+  transition: fill 0.2s ease, stroke 0.2s ease;
+}
+
+.heart.on svg {
+  fill: var(--terracotta);
+  stroke: var(--terracotta);
+}
+
+.heart.pop {
+  animation: pop 0.4s ease;
+}
+
+@keyframes pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+/* card text */
+.card-body {
+  padding: 20px 6px 0;
+}
+
+.card-loc {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--terracotta);
+  margin-bottom: 6px;
+}
+
+.card-body h3 {
+  margin-bottom: 6px;
+}
+
+.card-specs {
+  color: rgba(30, 42, 36, 0.7);
+  font-size: 0.95rem;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.chip {
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--sage);
+  color: var(--forest);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.card-monthly {
+  padding-top: 12px;
+  border-top: 1px dashed rgba(31, 61, 47, 0.25);
+  font-size: 0.9rem;
+  color: rgba(30, 42, 36, 0.75);
+}
+
+.card-monthly strong {
+  color: var(--forest);
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+}
+
+/* grid on smaller screens */
+@media (max-width: 1000px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+  .grid .card:nth-child(3n + 2) { margin-top: 0; }
+  .grid .card:nth-child(even) { margin-top: 40px; }
+}
+
+@media (max-width: 640px) {
+  .grid { grid-template-columns: 1fr; }
+  .grid .card:nth-child(even) { margin-top: 0; }
+}
