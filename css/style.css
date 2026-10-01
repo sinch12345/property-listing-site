@@ -1,0 +1,40 @@
+/* ===== Design tokens ===== */
+:root {
+  /* Colors */
+  --paper: #F6F0E6;
+  --ink: #1E2A24;
+  --forest: #1F3D2F;
+  --terracotta: #C8553D;
+  --gold: #E2B866;
+  --sage: #DDE5D8;
+  --white: #FFFFFF;
+
+  /* Fonts */
+  --font-heading: 'Fraunces', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+
+  /* Shape */
+  --arch: 999px 999px 24px 24px;   /* the signature arch */
+  --radius: 20px;
+  --shadow: 0 12px 30px rgba(31, 61, 47, 0.15);
+}
+
+/* ===== Base reset ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: 1.1;
+}
