@@ -1,9 +1,12 @@
-/* ===== Property cards, favorites ===== */
+/* ===== Property cards, favorites, filters, sorting ===== */
 
 const FAV_KEY = 'nestora_favs';
 const grid = document.getElementById('propertyGrid');
-const emptyNote = document.getElementById('emptyNote');   // only exists on saved.html
-const resultCount = document.getElementById('resultCount'); // only exists on listings.html
+const emptyNote = document.getElementById('emptyNote');       // only on saved.html
+const resultCount = document.getElementById('resultCount');   // only on listings.html
+const filterBar = document.getElementById('filterBar');       // only on listings.html
+const noResults = document.getElementById('noResults');       // only on listings.html
+const sortBy = document.getElementById('sortBy');             // only on listings.html
 
 /* ---- Favorites (saved in the browser) ---- */
 function getFavs() {
@@ -100,17 +103,116 @@ function renderGrid(list) {
   if (emptyNote) {
     emptyNote.style.display = list.length ? 'none' : 'block';
   }
+  if (noResults) {
+    noResults.hidden = list.length > 0;
+  }
+}
+
+/* =========================================================
+   FILTERS AND SORTING (listings.html)
+   ========================================================= */
+
+const filters = { location: '', type: '', budget: '', vibe: '' };
+
+function applyFilters(list) {
+  return list.filter(p =>
+    (!filters.location || p.location === filters.location) &&
+    (!filters.type     || p.type === filters.type) &&
+    (!filters.budget   || p.price <= Number(filters.budget)) &&
+    (!filters.vibe     || p.vibes.includes(filters.vibe))
+  );
+}
+
+function sortList(list, mode) {
+  const sorted = [...list];
+  if (mode === 'priceLow')  sorted.sort((a, b) => a.price - b.price);
+  else if (mode === 'priceHigh') sorted.sort((a, b) => b.price - a.price);
+  else sorted.sort((a, b) => new Date(b.added) - new Date(a.added));
+  return sorted;
+}
+
+/* Read the filters from the web address (?location=Lakeside&type=Villa ...) */
+function readFiltersFromURL() {
+  const params = new URLSearchParams(location.search);
+  Object.keys(filters).forEach(key => {
+    filters[key] = params.get(key) || '';
+  });
+  const sort = params.get('sort');
+  if (sort && sortBy) sortBy.value = sort;
+}
+
+/* Write the filters back into the address bar, so the link can be shared */
+function writeFiltersToURL() {
+  const params = new URLSearchParams();
+  Object.keys(filters).forEach(key => {
+    if (filters[key]) params.set(key, filters[key]);
+  });
+  if (sortBy && sortBy.value !== 'newest') params.set('sort', sortBy.value);
+  const query = params.toString();
+  try {
+    history.replaceState(null, '', location.pathname + (query ? '?' + query : ''));
+  } catch (e) { /* some browsers block this on local files: ignore */ }
+}
+
+/* Make the controls match the filter values */
+function syncControls() {
+  filterBar.querySelector('#fLocation').value = filters.location;
+  filterBar.querySelector('#fType').value = filters.type;
+  filterBar.querySelector('#fBudget').value = filters.budget;
+  filterBar.querySelectorAll('.vibe-pill').forEach(pill => {
+    pill.classList.toggle('active', pill.dataset.vibe === filters.vibe);
+  });
+}
+
+function refresh() {
+  writeFiltersToURL();
+  renderGrid(getPageList());
+}
+
+if (filterBar) {
+  readFiltersFromURL();
+  syncControls();
+
+  /* dropdowns */
+  filterBar.addEventListener('change', (e) => {
+    if (e.target.id === 'fLocation') filters.location = e.target.value;
+    if (e.target.id === 'fType')     filters.type = e.target.value;
+    if (e.target.id === 'fBudget')   filters.budget = e.target.value;
+    refresh();
+  });
+
+  /* vibe pills (click again to switch off) */
+  filterBar.addEventListener('click', (e) => {
+    const pill = e.target.closest('.vibe-pill');
+    if (!pill) return;
+    filters.vibe = filters.vibe === pill.dataset.vibe ? '' : pill.dataset.vibe;
+    syncControls();
+    refresh();
+  });
+
+  /* clear everything */
+  document.getElementById('clearFilters').addEventListener('click', () => {
+    Object.keys(filters).forEach(key => { filters[key] = ''; });
+    sortBy.value = 'newest';
+    syncControls();
+    refresh();
+  });
+
+  sortBy.addEventListener('change', refresh);
 }
 
 /* ---- Decide which properties this page shows ---- */
 function getPageList() {
   const favs = getFavs();
-  let list = [...PROPERTIES].sort((a, b) => new Date(b.added) - new Date(a.added));
 
-  if (emptyNote) {                       // saved.html
-    return list.filter(p => favs.includes(p.id));
+  if (emptyNote) {                                  // saved.html
+    return sortList(PROPERTIES.filter(p => favs.includes(p.id)), 'newest');
   }
-  const limit = parseInt(grid.dataset.limit, 10);   // index.html shows 3
+  if (filterBar) {                                  // listings.html
+    return sortList(applyFilters(PROPERTIES), sortBy.value);
+  }
+  const list = sortList(PROPERTIES, 'newest');      // index.html shows the newest few
+  const limit = parseInt(grid.dataset.limit, 10);
   return limit ? list.slice(0, limit) : list;
 }
 
