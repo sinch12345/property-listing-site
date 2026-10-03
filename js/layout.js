@@ -19,6 +19,7 @@ function savedCount() {
 }
 
 /* ---- Header ---- */
+/* ---- Header ---- */
 const navLinks = PAGES.map(p => {
   const active = p.file === current ? ' class="active"' : '';
   const count = p.file === 'saved.html'
@@ -28,12 +29,36 @@ const navLinks = PAGES.map(p => {
 }).join('');
 
 document.body.insertAdjacentHTML('afterbegin', `
-  <header class="site-header">
+  <header class="site-header" id="siteHeader">
     <a href="index.html" class="logo">Nest<span>ora</span></a>
-    <nav class="nav">${navLinks}</nav>
-    <a href="#contact" class="btn btn-accent">List a property</a>
+    <nav class="nav" id="siteNav">
+      ${navLinks}
+      <a href="list.html" class="btn btn-accent nav-cta">List a property</a>
+    </nav>
+    <a href="list.html" class="btn btn-accent header-cta">List a property</a>
+    <button type="button" class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </header>
 `);
+
+/* ---- Mobile menu ---- */
+const siteHeader = document.getElementById('siteHeader');
+const menuBtn = document.getElementById('menuBtn');
+
+function setMenu(open) {
+  siteHeader.classList.toggle('open', open);
+  menuBtn.setAttribute('aria-expanded', open);
+  menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+}
+
+menuBtn.addEventListener('click', () => {
+  setMenu(!siteHeader.classList.contains('open'));
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') setMenu(false);
+});
 
 /* ---- Footer ---- */
 document.body.insertAdjacentHTML('beforeend', `

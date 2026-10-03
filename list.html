@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>List a property | Nestora</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="curtain"></div>
+
+  <main>
+    <section class="page-hero">
+      <p class="eyebrow reveal" style="--d:.5s">For owners and agents</p>
+      <h1 class="reveal" style="--d:.65s">Show your home at its <em>best</em></h1>
+      <p class="hero-sub reveal" style="--d:.8s">Fill in the details and watch your listing card come to life.</p>
+    </section>
+
+    <section class="list-section">
+      <div class="list-layout">
+
+        <form class="list-form reveal" id="listForm" style="--d:.9s">
+          <h3>The basics</h3>
+          <input type="text" id="lTitle" placeholder="Home title (e.g. The Sunroom Villa)" required>
+
+          <div class="form-row">
+            <label>Neighborhood
+              <select id="lLocation">
+                <option>Lakeside</option>
+                <option>Old Town</option>
+                <option>Hillcrest</option>
+                <option>Harbour</option>
+              </select>
+            </label>
+            <label>Type
+              <select id="lType">
+                <option>Apartment</option>
+                <option>Villa</option>
+                <option>Townhouse</option>
+                <option>Studio</option>
+              </select>
+            </label>
+          </div>
+
+          <h3>The numbers</h3>
+          <div class="form-row">
+            <label>Price ($)
+              <input type="number" id="lPrice" min="50000" step="5000" value="350000" required>
+            </label>
+            <label>Area (sq ft)
+              <input type="number" id="lArea" min="200" step="10" value="1000" required>
+            </label>
+          </div>
+          <div class="form-row">
+            <label>Bedrooms
+              <input type="number" id="lBeds" min="1" max="10" value="2" required>
+            </label>
+            <label>Bathrooms
+              <input type="number" id="lBaths" min="1" max="10" value="1" required>
+            </label>
+          </div>
+
+          <h3>The feeling <small>(pick up to 3)</small></h3>
+          <div class="vibe-pills" id="lVibes">
+            <label class="check-pill"><input type="checkbox" value="Sunlit mornings"><span>Sunlit mornings</span></label>
+            <label class="check-pill"><input type="checkbox" value="Quiet street"><span>Quiet street</span></label>
+            <label class="check-pill"><input type="checkbox" value="Work-from-home ready"><span>Work-from-home ready</span></label>
+            <label class="check-pill"><input type="checkbox" value="Pet friendly"><span>Pet friendly</span></label>
+            <label class="check-pill"><input type="checkbox" value="Great for hosting"><span>Great for hosting</span></label>
+          </div>
+
+          <h3>Your details</h3>
+          <div class="form-row">
+            <input type="text" placeholder="Your name" required>
+            <input type="email" placeholder="Email address" required>
+          </div>
+          <textarea rows="3" placeholder="Anything else we should know?"></textarea>
+
+          <button type="submit" class="btn btn-accent">Submit listing</button>
+        </form>
+
+        <aside class="preview reveal" style="--d:1.1s">
+          <p class="eyebrow">Live preview</p>
+          <div class="preview-card" id="previewCard"></div>
+          <p class="preview-note">This is how buyers will see your home.</p>
+        </aside>
+
+      </div>
+    </section>
+  </main>
+
+  <script src="js/layout.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/list.js"></script>
+</body>
+</html>
