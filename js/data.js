@@ -52,3 +52,13 @@ const PROPERTIES = [
     palette: ["#DDE5D8", "#E2B866", "#C8553D"], added: "2026-08-30", image: null
   }
 ];
+
+
+/* ===== Listings submitted through the "List a property" form ===== */
+try {
+  const mine = JSON.parse(localStorage.getItem('nestora_user_listings') || '[]');
+  mine.forEach(p => {
+    p.image = (p.photos && p.photos[0]) || null;   // cover photo for the cards
+    PROPERTIES.push(p);
+  });
+} catch (e) { /* storage blocked: ignore */ }

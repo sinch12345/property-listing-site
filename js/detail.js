@@ -47,6 +47,13 @@ function interiorHTML(p) {
 }
 
 function buildScenes(p) {
+  /* listings with uploaded photos: use the real photos */
+  if (p.photos && p.photos.length) {
+    return p.photos.map((src, i) => ({
+      label: 'Photo ' + (i + 1),
+      html: `<img src="${src}" alt="${p.title}, photo ${i + 1}">`
+    }));
+  }
   const golden = { ...p, id: p.id + 100, palette: ['#E2B866', '#C8553D', p.palette[2]] };
   return [
     { label: 'Exterior',    html: artHTML(p) },
