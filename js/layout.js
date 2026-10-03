@@ -113,3 +113,64 @@ document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
 /* Later, cards created by JavaScript will call this to animate in too */
 window.observeReveal = (el) => revealObserver.observe(el);
+
+/* ---- Favicon (added from JavaScript so every page gets it) ---- */
+if (!document.querySelector('link[rel="icon"]')) {
+  const icon = document.createElement('link');
+  icon.rel = 'icon';
+  icon.type = 'image/svg+xml';
+  icon.href = 'images/favicon.svg';
+  document.head.appendChild(icon);
+}
+
+/* ---- Back-to-top button ---- */
+document.body.insertAdjacentHTML('beforeend', `
+  <button type="button" class="to-top" id="toTop" aria-label="Back to top">
+    <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+  </button>
+`);
+
+const toTop = document.getElementById('toTop');
+
+window.addEventListener('scroll', () => {
+  toTop.classList.toggle('show', window.scrollY > 600);
+}, { passive: true });
+
+toTop.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+/* ---- Animated counters ---- */
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function runCounter(el) {
+  const target = Number(el.dataset.target);
+  const suffix = el.dataset.suffix || '';
+
+  if (reduceMotion) {
+    el.textContent = target.toLocaleString('en-US') + suffix;
+    return;
+  }
+
+  const duration = 1800;
+  const start = performance.now();
+
+  function tick(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - t, 3);            // slows down at the end
+    el.textContent = Math.round(target * eased).toLocaleString('en-US') + suffix;
+    if (t < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      runCounter(entry.target);
+      counterObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.6 });
+
+document.querySelectorAll('.count').forEach(el => counterObserver.observe(el));
