@@ -2,7 +2,7 @@
 
 A multi-page property listing website built from scratch with plain HTML, CSS and JavaScript. No frameworks, themes or templates.
 
-**Live site:** https://YOUR-USERNAME.github.io/property-listing-site/
+**Live site:** https://sinch12345.github.io/property-listing-site/
 
 ## Design concept: "Arch & Paper"
 An editorial, boutique-hotel look. Doorway-shaped arches frame every image, on a warm paper-cream palette with forest green, terracotta and gold accents. Fonts: Fraunces (headings) and DM Sans (body).
