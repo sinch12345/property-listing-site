@@ -79,7 +79,7 @@ function cardHTML(p, favs) {
       </div>
       <div class="card-body">
         <p class="card-loc">${p.location} · ${p.type}</p>
-        <h3>${p.title}</h3>
+                <h3><a class="stretched" href="property.html?id=${p.id}">${p.title}</a></h3>
         <p class="card-specs">${p.beds} bed · ${p.baths} bath · ${p.area.toLocaleString('en-US')} sq ft</p>
         <div class="chips">${vibes}</div>
         <p class="card-monthly">≈ <strong>${formatPrice(monthlyPayment(p.price))}</strong> / month</p>
