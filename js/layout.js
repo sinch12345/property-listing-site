@@ -4,6 +4,7 @@ const PAGES = [
   { file: 'index.html',         label: 'Home' },
   { file: 'listings.html',      label: 'Homes' },
   { file: 'neighborhoods.html', label: 'Neighborhoods' },
+  { file: 'quiz.html',          label: 'Vibe Quiz' },
   { file: 'about.html',         label: 'Why Nestora' },
   { file: 'saved.html',         label: 'Saved' }
 ];
