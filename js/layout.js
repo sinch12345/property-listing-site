@@ -175,3 +175,95 @@ const counterObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.6 });
 
 document.querySelectorAll('.count').forEach(el => counterObserver.observe(el));
+
+
+/* ===== Compare tray (works on every page) ===== */
+const CMP_KEY = 'nestora_compare';
+const MAX_COMPARE = 3;
+
+function getCompare() {
+  try {
+    return JSON.parse(localStorage.getItem(CMP_KEY) || '[]');
+  } catch (e) {
+    return [];
+  }
+}
+
+function setCompare(list) {
+  try {
+    localStorage.setItem(CMP_KEY, JSON.stringify(list));
+  } catch (e) { /* storage blocked: ignore */ }
+  syncCompareUI();
+}
+
+document.body.insertAdjacentHTML('beforeend', `
+  <div class="compare-tray" id="compareTray">
+    <div class="ct-slots" id="ctSlots"></div>
+    <p class="ct-text" id="ctText"></p>
+    <button type="button" class="ct-clear" id="ctClear">Clear</button>
+    <a class="btn btn-accent ct-go" id="ctGo">Compare</a>
+  </div>
+`);
+
+const compareTray = document.getElementById('compareTray');
+const ctSlots = document.getElementById('ctSlots');
+const ctText = document.getElementById('ctText');
+const ctGo = document.getElementById('ctGo');
+let cmpTimer;
+
+/* Make every button and the tray match the saved list */
+function syncCompareUI() {
+  const list = getCompare();
+
+  document.querySelectorAll('.compare-btn').forEach(b => {
+    const on = list.includes(Number(b.dataset.id));
+    b.classList.toggle('on', on);
+    b.textContent = on ? '✓ Added to compare' : '+ Compare';
+  });
+
+  const show = list.length > 0 && current !== 'compare.html';
+  compareTray.classList.toggle('show', show);
+  document.body.classList.toggle('has-tray', show);
+
+  ctSlots.innerHTML = [0, 1, 2].map(i => `<i class="${i < list.length ? 'full' : ''}"></i>`).join('');
+  ctText.textContent = list.length < 2
+    ? 'Pick one more home to compare'
+    : list.length + ' homes ready to compare';
+
+  /* no href = not clickable until 2 homes are chosen */
+  if (list.length >= 2) ctGo.setAttribute('href', 'compare.html');
+  else ctGo.removeAttribute('href');
+}
+
+/* Short message on the tray, e.g. when it's full */
+function cmpNote(msg) {
+  ctText.textContent = msg;
+  compareTray.classList.remove('shake');
+  void compareTray.offsetWidth;
+  compareTray.classList.add('shake');
+  clearTimeout(cmpTimer);
+  cmpTimer = setTimeout(syncCompareUI, 2200);
+}
+
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.compare-btn');
+  if (btn) {
+    const id = Number(btn.dataset.id);
+    let list = getCompare();
+    if (list.includes(id)) {
+      list = list.filter(x => x !== id);
+    } else if (list.length >= MAX_COMPARE) {
+      cmpNote('You can compare up to 3 homes');
+      return;
+    } else {
+      list.push(id);
+    }
+    setCompare(list);
+    return;
+  }
+  if (e.target.closest('#ctClear')) setCompare([]);
+});
+
+window.addEventListener('pageshow', syncCompareUI);
+window.addEventListener('storage', syncCompareUI);
+syncCompareUI();

@@ -65,7 +65,9 @@ function artHTML(p) {
 
 /* ---- Build one card ---- */
 function cardHTML(p, favs) {
-  const saved = favs.includes(p.id);
+  //const saved = favs.includes(p.id);
+    const saved = favs.includes(p.id);
+  const inCompare = getCompare().includes(p.id);
   const vibes = p.vibes.map(v => `<span class="chip">${v}</span>`).join('');
   return `
     <article class="card reveal" data-id="${p.id}">
@@ -82,7 +84,8 @@ function cardHTML(p, favs) {
                 <h3><a class="stretched" href="property.html?id=${p.id}">${p.title}</a></h3>
         <p class="card-specs">${p.beds} bed · ${p.baths} bath · ${p.area.toLocaleString('en-US')} sq ft</p>
         <div class="chips">${vibes}</div>
-        <p class="card-monthly">≈ <strong>${formatPrice(monthlyPayment(p.price))}</strong> / month</p>
+                <p class="card-monthly">≈ <strong>${formatPrice(monthlyPayment(p.price))}</strong> / month</p>
+        <button type="button" class="compare-btn ${inCompare ? 'on' : ''}" data-id="${p.id}">${inCompare ? '✓ Added to compare' : '+ Compare'}</button>
       </div>
     </article>`;
 }
