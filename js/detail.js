@@ -55,10 +55,10 @@ function buildScenes(p) {
     }));
   }
   const golden = { ...p, id: p.id + 100, palette: ['#E2B866', '#C8553D', p.palette[2]] };
-  return [
-    { label: 'Exterior',    html: artHTML(p) },
-    { label: 'Golden hour', html: artHTML(golden) },
-    { label: 'Living room', html: interiorHTML(p) }
+   return [
+    { label: 'Exterior',    html: artHTML(p),      nightLabel: 'Exterior',     night: nightArtHTML(p, false) },
+    { label: 'Golden hour', html: artHTML(golden), nightLabel: 'Moonlight',    night: nightArtHTML(p, true) },
+    { label: 'Living room', html: interiorHTML(p), nightLabel: 'Evening lamp', night: nightInteriorHTML() }
   ];
 }
 
@@ -86,8 +86,13 @@ function renderDetail(p) {
     <a href="listings.html" class="back-link reveal">← Back to all homes</a>
 
     <div class="detail-top">
-      <div class="gallery reveal">
+            <div class="gallery reveal">
         <div class="arch gallery-main" id="galleryMain">${scenes[0].html}</div>
+        ${scenes[0].night ? `
+        <button type="button" class="dn-toggle" id="dnToggle" aria-pressed="false" aria-label="Switch to night view">
+          <span class="dn-track"><i class="dn-knob"></i></span>
+          <span id="dnLabel">Day</span>
+        </button>` : ''}
         <div class="gallery-tabs" id="galleryTabs">
           ${scenes.map((s, i) => `<button type="button" class="vibe-pill ${i === 0 ? 'active' : ''}" data-i="${i}">${s.label}</button>`).join('')}
         </div>
@@ -170,18 +175,44 @@ function renderDetail(p) {
   /* animate sections in */
   detailRoot.querySelectorAll('.reveal').forEach(el => window.observeReveal(el));
 
-  /* gallery tabs */
+    /* gallery tabs + day/night toggle */
   const main = document.getElementById('galleryMain');
-  document.getElementById('galleryTabs').addEventListener('click', (e) => {
-    const tab = e.target.closest('.vibe-pill');
-    if (!tab) return;
-    document.querySelectorAll('#galleryTabs .vibe-pill').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    main.innerHTML = scenes[Number(tab.dataset.i)].html;
+  const tabsBox = document.getElementById('galleryTabs');
+  const dnToggle = document.getElementById('dnToggle');
+  let sceneIndex = 0;
+  let night = false;
+
+  function showScene() {
+    const s = scenes[sceneIndex];
+    main.innerHTML = (night && s.night) ? s.night : s.html;
+    main.classList.toggle('is-night', night);
     main.classList.remove('swap');
     void main.offsetWidth;
     main.classList.add('swap');
+
+    tabsBox.querySelectorAll('.vibe-pill').forEach((t, i) => {
+      t.classList.toggle('active', i === sceneIndex);
+      t.textContent = (night && scenes[i].nightLabel) ? scenes[i].nightLabel : scenes[i].label;
+    });
+  }
+
+  tabsBox.addEventListener('click', (e) => {
+    const tab = e.target.closest('.vibe-pill');
+    if (!tab) return;
+    sceneIndex = Number(tab.dataset.i);
+    showScene();
   });
+
+  if (dnToggle) {
+    dnToggle.addEventListener('click', () => {
+      night = !night;
+      dnToggle.classList.toggle('night', night);
+      dnToggle.setAttribute('aria-pressed', night);
+      dnToggle.setAttribute('aria-label', night ? 'Switch to day view' : 'Switch to night view');
+      document.getElementById('dnLabel').textContent = night ? 'Night' : 'Day';
+      showScene();
+    });
+  }
 
   /* save button */
   document.getElementById('saveBtn').addEventListener('click', (e) => {
@@ -241,4 +272,61 @@ if (prop) {
   detailRoot.innerHTML = `
     <h1>We couldn't find that <em>home</em></h1>
     <p class="hero-sub">It may have been sold. <a href="listings.html" class="back-link">Browse all homes →</a></p>`;
+}
+
+/* ---- Night scenes ---- */
+function nightArtHTML(p, big) {
+  const ground = p.palette[2];
+  const gid = 'nsky' + p.id + (big ? 'b' : '');
+  const moonX = p.id % 2 ? 225 : 75;
+  const moonR = big ? 44 : 30;
+  const spots = [[40,40],[95,75],[145,28],[200,62],[262,38],[58,138],[255,128],[172,98],[28,96],[282,96],[120,120]];
+  const stars = spots.map((s, i) =>
+    `<circle class="star" cx="${s[0]}" cy="${s[1]}" r="${i % 3 === 0 ? 2.2 : 1.5}" fill="#F6F0E6" style="animation-delay:${(i * 0.4).toFixed(1)}s"/>`
+  ).join('');
+
+  return `
+    <svg class="card-art" viewBox="0 0 300 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#0E1830"/>
+          <stop offset="1" stop-color="#34436E"/>
+        </linearGradient>
+      </defs>
+      <rect width="300" height="360" fill="url(#${gid})"/>
+      ${stars}
+      <circle cx="${moonX}" cy="105" r="${moonR + 14}" fill="#F6F0E6" opacity=".12"/>
+      <circle cx="${moonX}" cy="105" r="${moonR}" fill="#F6F0E6" opacity=".95"/>
+      <circle cx="${moonX - 8}" cy="98" r="${(moonR * 0.22).toFixed(1)}" fill="#DAD3C2"/>
+      <ellipse cx="150" cy="385" rx="270" ry="115" fill="${ground}"/>
+      <ellipse cx="150" cy="385" rx="270" ry="115" fill="#0A1224" opacity=".45"/>
+      <ellipse cx="150" cy="300" rx="40" ry="7" fill="#E2B866" opacity=".25"/>
+      <rect x="95" y="212" width="110" height="86" fill="#CFC8B8"/>
+      <rect x="95" y="212" width="110" height="86" fill="#0A1224" opacity=".3"/>
+      <polygon points="82,216 150,160 218,216" fill="#7E3426"/>
+      <rect class="win" x="138" y="252" width="24" height="46" rx="12"/>
+      <rect class="win" x="107" y="232" width="20" height="20" rx="3"/>
+      <rect class="win" x="173" y="232" width="20" height="20" rx="3"/>
+    </svg>`;
+}
+
+function nightInteriorHTML() {
+  return `
+    <svg class="card-art" viewBox="0 0 300 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <rect width="300" height="360" fill="#1B2440"/>
+      <rect y="272" width="300" height="88" fill="#10172B"/>
+      <path d="M92 252 V132 a58 58 0 0 1 116 0 V252 Z" fill="#0B1430" stroke="#F6F0E6" stroke-opacity=".85" stroke-width="7"/>
+      <circle class="star" cx="120" cy="108" r="1.8" fill="#F6F0E6"/>
+      <circle class="star" cx="168" cy="90" r="1.5" fill="#F6F0E6" style="animation-delay:.8s"/>
+      <circle class="star" cx="124" cy="150" r="1.4" fill="#F6F0E6" style="animation-delay:1.6s"/>
+      <circle cx="176" cy="130" r="16" fill="#F6F0E6" opacity=".95"/>
+      <line x1="150" y1="74" x2="150" y2="252" stroke="#F6F0E6" stroke-opacity=".85" stroke-width="5"/>
+      <line x1="92" y1="170" x2="208" y2="170" stroke="#F6F0E6" stroke-opacity=".85" stroke-width="5"/>
+      <polygon points="232,250 248,250 285,360 195,360" fill="#E2B866" opacity=".12"/>
+      <rect x="30" y="236" width="150" height="48" rx="16" fill="#4A4A5C"/>
+      <rect x="30" y="262" width="150" height="34" rx="12" fill="#8A6A2E"/>
+      <rect x="226" y="262" width="28" height="36" rx="4" fill="#8A6A2E"/>
+      <rect x="238" y="250" width="4" height="12" fill="#F6F0E6" opacity=".7"/>
+      <path class="win" d="M226 250 L254 250 L248 226 L232 226 Z"/>
+    </svg>`;
 }
