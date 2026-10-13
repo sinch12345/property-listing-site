@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings | Nestora</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+  <div class="curtain"></div>
+
+  <main>
+    <section class="page-hero">
+      <p class="eyebrow reveal" style="--d:.5s">Make it yours</p>
+      <h1 class="reveal" style="--d:.65s">Your <em>settings</em></h1>
+      <p class="hero-sub reveal" style="--d:.8s">Changes apply straight away and are remembered on this device.</p>
+    </section>
+
+    <section class="settings-section">
+      <div class="settings-grid">
+
+        <div class="settings-col">
+          <article class="set-card reveal" style="--d:.9s">
+            <h3>Appearance</h3>
+            <p class="set-desc">Auto follows your device's light or dark setting.</p>
+            <div class="seg" data-group="theme" role="radiogroup" aria-label="Theme">
+              <button type="button" role="radio" data-value="light">Light</button>
+              <button type="button" role="radio" data-value="dark">Evening</button>
+              <button type="button" role="radio" data-value="auto">Auto</button>
+            </div>
+          </article>
+
+          <article class="set-card reveal" style="--d:1s">
+            <h3>Text size</h3>
+            <p class="set-desc">Make everything on the site easier to read.</p>
+            <div class="seg" data-group="text" role="radiogroup" aria-label="Text size">
+              <button type="button" role="radio" data-value="normal">Normal</button>
+              <button type="button" role="radio" data-value="large">Large</button>
+              <button type="button" role="radio" data-value="xl">Extra large</button>
+            </div>
+          </article>
+
+          <article class="set-card reveal" style="--d:1.1s">
+            <h3>Motion</h3>
+            <label class="switch-row">
+              <span>
+                <strong>Reduce animations</strong>
+                <small>Turns off page transitions, floating badges and scroll effects.</small>
+              </span>
+              <input type="checkbox" id="optMotion" role="switch">
+              <i class="switch"></i>
+            </label>
+          </article>
+        </div>
+
+        <div class="settings-col">
+          <article class="set-card reveal" style="--d:.95s">
+            <h3>Your data</h3>
+            <p class="set-desc">Stored only in this browser. Nothing is sent to a server.</p>
+
+            <div class="data-row">
+              <span><strong>Saved homes</strong><small id="cntFavs"></small></span>
+              <button type="button" class="btn btn-ghost btn-sm" data-clear="favs">Clear</button>
+            </div>
+            <div class="data-row">
+              <span><strong>Compare list</strong><small id="cntCompare"></small></span>
+              <button type="button" class="btn btn-ghost btn-sm" data-clear="compare">Clear</button>
+            </div>
+            <div class="data-row">
+              <span><strong>Listings I submitted</strong><small id="cntListings"></small></span>
+              <button type="button" class="btn btn-ghost btn-sm" data-clear="listings">Delete</button>
+            </div>
+
+            <button type="button" class="btn btn-primary set-reset" id="resetSettings">Reset all settings</button>
+          </article>
+
+          <article class="set-card reveal" style="--d:1.15s">
+            <h3>About</h3>
+            <p class="set-about">Nestora v1.0. Built from scratch with HTML, CSS and JavaScript. All homes and statistics are sample content.</p>
+          </article>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <p class="set-toast" id="setToast" role="status"></p>
+
+  <script src="js/layout.js"></script>
+  <script src="js/settings.js"></script>
+</body>
+</html>

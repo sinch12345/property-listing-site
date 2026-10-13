@@ -34,9 +34,16 @@ document.body.insertAdjacentHTML('afterbegin', `
     <a href="index.html" class="logo">Nest<span>ora</span></a>
     <nav class="nav" id="siteNav">
       ${navLinks}
-      <a href="list.html" class="btn btn-accent nav-cta">List a property</a>
+          <a href="list.html" class="btn btn-accent header-cta">List a property</a>
+    <a href="settings.html" class="theme-btn settings-btn${current === 'settings.html' ? ' active' : ''}" aria-label="Settings" title="Settings">
+      <svg viewBox="0 0 24 24"><path d="M4 6h10M20 6h0M4 12h2M12 12h8M4 18h10M20 18h0"/><circle cx="17" cy="6" r="2.5"/><circle cx="9" cy="12" r="2.5"/><circle cx="17" cy="18" r="2.5"/></svg>
+    </a>
+    <button type="button" class="theme-btn" id="themeBtn" aria-label="Evening mode" aria-pressed="false" title="Evening mode">
+      <svg class="ico-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <svg class="ico-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    </button>
     </nav>
-    <a href="list.html" class="btn btn-accent header-cta">List a property</a>
+   
     <button type="button" class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
@@ -78,7 +85,8 @@ const curtain = document.querySelector('.curtain');
 
 document.addEventListener('click', (e) => {
   const link = e.target.closest('a[href]');
-  if (!link || !curtain) return;
+    if (!link || !curtain) return;
+  if (getComputedStyle(curtain).display === 'none') return;
 
   const href = link.getAttribute('href');
   const isInternal = link.origin === location.origin;
@@ -142,7 +150,8 @@ toTop.addEventListener('click', () => {
 });
 
 /* ---- Animated counters ---- */
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  || document.documentElement.dataset.motion === 'reduced';
 
 function runCounter(el) {
   const target = Number(el.dataset.target);
