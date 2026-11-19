@@ -20,13 +20,18 @@
     </section>
 
     <!-- FILTER BAR -->
-    <section class="filter-section">
-      <div class="filter-bar reveal" id="filterBar" style="--d:.9s">
+        <section class="shop">
+      <aside class="filter-bar reveal" id="filterBar" style="--d:.9s">
+        <div class="filter-head">
+          <h3>Make it yours</h3>
+          <button type="button" class="clear-link" id="clearFilters">Clear all</button>
+        </div>
+
         <div class="filter-selects">
           <label class="filter-field">
             <span>Neighborhood</span>
             <select id="fLocation">
-              <option value="">Anywhere</option>
+              <option value="">Any neighborhood</option>
               <option>Lakeside</option>
               <option>Old Town</option>
               <option>Hillcrest</option>
@@ -35,9 +40,9 @@
           </label>
 
           <label class="filter-field">
-            <span>Type</span>
+            <span>Home type</span>
             <select id="fType">
-              <option value="">Any type</option>
+              <option value="">Any home type</option>
               <option>Apartment</option>
               <option>Villa</option>
               <option>Townhouse</option>
@@ -55,12 +60,10 @@
               <option value="1000000">$1,000,000</option>
             </select>
           </label>
-
-          <button type="button" class="btn btn-ghost clear-btn" id="clearFilters">Clear all</button>
         </div>
 
         <div class="vibe-row">
-          <span class="vibe-label">Vibe</span>
+          <span class="vibe-label">Your must-haves</span>
           <div class="vibe-pills">
             <button type="button" class="vibe-pill" data-vibe="Sunlit mornings">Sunlit mornings</button>
             <button type="button" class="vibe-pill" data-vibe="Quiet street">Quiet street</button>
@@ -69,27 +72,27 @@
             <button type="button" class="vibe-pill" data-vibe="Great for hosting">Great for hosting</button>
           </div>
         </div>
+      </aside>
+
+      <div class="shop-main" id="listings">
+        <div class="section-head">
+          <p class="result-count" id="resultCount"></p>
+          <label class="sort">
+            <span>Sort by</span>
+            <select id="sortBy">
+              <option value="newest">Newest</option>
+              <option value="priceLow">Price: low to high</option>
+              <option value="priceHigh">Price: high to low</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="grid" id="propertyGrid"></div>
+
+        <p class="empty-note" id="noResults" hidden>
+          No homes match those filters. Try removing one, or press <strong>Clear all</strong>.
+        </p>
       </div>
-    </section>
-
-    <section class="listings" id="listings">
-      <div class="section-head">
-        <p class="result-count" id="resultCount"></p>
-        <label class="sort">
-          <span>Sort by</span>
-          <select id="sortBy">
-            <option value="newest">Newest</option>
-            <option value="priceLow">Price: low to high</option>
-            <option value="priceHigh">Price: high to low</option>
-          </select>
-        </label>
-      </div>
-
-      <div class="grid" id="propertyGrid"></div>
-
-      <p class="empty-note" id="noResults" hidden>
-        No homes match those filters. Try removing one, or press <strong>Clear all</strong>.
-      </p>
     </section>
   </main>
 
