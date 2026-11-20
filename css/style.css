@@ -2960,3 +2960,49 @@ html[data-motion="reduced"] :is(.badge, .star, .win, .pin) { animation: none; }
 
 .suggest button:hover,
 .suggest button:focus-visible { background: var(--sage); }
+
+/* ===== recently-viewed ===== */
+.recent { margin-bottom: 36px; }
+
+.recent-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.recent-head h3 { font-size: 1.2rem; }
+
+.recent-row {
+  display: flex;
+  gap: 18px;
+  padding-bottom: 12px;
+  overflow-x: auto;
+}
+
+.recent-item {
+  flex: 0 0 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.85rem;
+  transition: transform 0.3s ease;
+}
+
+.recent-item:hover { transform: translateY(-4px); }
+
+.recent-arch {
+  aspect-ratio: 4 / 5;
+  margin-bottom: 8px;
+  box-shadow: var(--shadow);
+}
+
+.recent-item strong {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+.recent-item span { color: rgba(30, 42, 36, 0.7); }
+
+[data-theme="dark"] .recent-item span { color: var(--muted); }
