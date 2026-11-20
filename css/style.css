@@ -3006,3 +3006,79 @@ html[data-motion="reduced"] :is(.badge, .star, .win, .pin) { animation: none; }
 .recent-item span { color: rgba(30, 42, 36, 0.7); }
 
 [data-theme="dark"] .recent-item span { color: var(--muted); }
+
+/* ===== contact ===== */
+.contact-section { padding-top: 30px; }
+
+.contact-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 50px;
+  align-items: start;
+}
+
+.faq h2,
+.contact-form h2 { margin-bottom: 22px; }
+
+.faq details {
+  border-bottom: 1px dashed rgba(31, 61, 47, 0.25);
+}
+
+.faq summary {
+  position: relative;
+  padding: 20px 40px 20px 0;
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+
+.faq summary::-webkit-details-marker { display: none; }
+
+.faq summary::after {
+  content: "+";
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: var(--sage);
+  color: var(--forest);
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.faq details[open] summary::after {
+  content: "–";
+  background: var(--gold);
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.faq summary:hover { color: var(--terracotta); }
+.faq summary:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+.faq details p {
+  padding: 0 0 20px;
+  color: rgba(30, 42, 36, 0.75);
+  animation: swapIn 0.35s ease;
+}
+
+.footer-link {
+  display: inline-block;
+  margin-top: 14px;
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.footer-link:hover { text-decoration: underline; }
+
+[data-theme="dark"] .faq details { border-color: var(--line); }
+[data-theme="dark"] .faq details p { color: var(--muted); }
+
+@media (max-width: 900px) {
+  .contact-layout { grid-template-columns: 1fr; gap: 40px; }
+}

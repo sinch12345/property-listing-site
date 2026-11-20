@@ -73,7 +73,7 @@ document.body.insertAdjacentHTML('beforeend', `
   <footer class="site-footer" id="contact">
     <h2>Ready to find <em>your</em> place?</h2>
     <p>hello@nestora.example &nbsp;·&nbsp; +00 000 000 0000</p>
-    <div class="footer-bottom">
+    <p><a class="footer-link" href="contact.html">Contact &amp; FAQ →</a></p>    <div class="footer-bottom">
       <span>© 2026 Nestora. All rights reserved.</span>
       <span>Built from scratch with HTML, CSS and JavaScript.</span>
     </div>

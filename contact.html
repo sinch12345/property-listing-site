@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact | Nestora</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+  <div class="curtain"></div>
+
+  <main>
+    <section class="page-hero">
+      <p class="eyebrow reveal" style="--d:.5s">We're here to help</p>
+      <h1 class="reveal" style="--d:.65s">Let's <em>talk</em></h1>
+      <p class="hero-sub reveal" style="--d:.8s">Check the quick answers first, or send us a message.</p>
+    </section>
+
+    <section class="contact-section">
+      <div class="contact-layout">
+
+        <div class="faq reveal" style="--d:.9s">
+          <h2>Quick answers</h2>
+
+          <details>
+            <summary>How does the vibe search work?</summary>
+            <p>Every home is tagged with how it feels to live there, such as sunlit mornings or a quiet street. Pick a vibe and we show matching homes.</p>
+          </details>
+          <details>
+            <summary>How is the monthly cost calculated?</summary>
+            <p>We assume a 20% down payment, a 6.5% interest rate and a 30-year loan. On each home page you can change all three with the sliders.</p>
+          </details>
+          <details>
+            <summary>How do I book a viewing?</summary>
+            <p>Open any home and use the enquiry form at the bottom. We reply within one working day.</p>
+          </details>
+          <details>
+            <summary>How do I list my property?</summary>
+            <p>Use the List a property page. Add details and up to 6 photos, and watch the preview card update as you type.</p>
+          </details>
+          <details>
+            <summary>Is my data stored anywhere?</summary>
+            <p>Saved homes, compare picks and settings stay in your own browser. Nothing is sent to a server.</p>
+          </details>
+        </div>
+
+        <form class="contact-form reveal" id="contactForm" style="--d:1s">
+          <h2>Send a message</h2>
+          <input type="text" id="cName" placeholder="Your name" required>
+          <input type="email" id="cEmail" placeholder="Email address" required>
+          <select id="cTopic">
+            <option>Buying a home</option>
+            <option>Listing a property</option>
+            <option>Something else</option>
+          </select>
+          <textarea id="cMsg" rows="5" placeholder="How can we help?" required></textarea>
+          <button type="submit" class="btn btn-accent">Send message</button>
+        </form>
+
+      </div>
+    </section>
+  </main>
+
+  <script src="js/layout.js"></script>
+</body>
+</html>
