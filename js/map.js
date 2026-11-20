@@ -77,3 +77,9 @@ document.getElementById('mapSwitch').addEventListener('click', (e) => {
   map.addLayer(showAreas ? areas : pins);
   document.querySelectorAll('#mapSwitch button').forEach(b => b.classList.toggle('active', b === btn));
 });
+
+document.querySelectorAll('.hood-item').forEach(item => {
+  const name = item.querySelector('strong').textContent;
+  const n = PROPERTIES.filter(p => p.location === name).length;
+  item.querySelector('small').textContent += ' · ' + n + (n === 1 ? ' home' : ' homes');
+});
