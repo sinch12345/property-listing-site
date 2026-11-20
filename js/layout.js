@@ -1,7 +1,7 @@
 /* ===== Shared layout: header, footer, page transitions, reveal ===== */
 
 const PAGES = [
-  { file: 'index.html',         label: 'Home' },
+ 
   { file: 'listings.html',      label: 'Homes' },
   { file: 'neighborhoods.html', label: 'Neighborhoods' },
   { file: 'quiz.html',          label: 'Vibe Quiz' },
