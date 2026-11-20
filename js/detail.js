@@ -266,8 +266,14 @@ function renderDetail(p) {
   });
 }
 
-if (prop) {
+ if (prop) {
   renderDetail(prop);
+  try {
+    const key = 'nestora_recent';
+    const seen = JSON.parse(localStorage.getItem(key) || '[]').filter(id => id !== prop.id);
+    seen.unshift(prop.id);
+    localStorage.setItem(key, JSON.stringify(seen.slice(0, 6)));
+  } catch (e) {}
 } else {
   detailRoot.innerHTML = `
     <h1>We couldn't find that <em>home</em></h1>
