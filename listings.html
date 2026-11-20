@@ -50,18 +50,34 @@
             </select>
           </label>
 
-          <label class="filter-field">
-            <span>Max budget</span>
-            <select id="fBudget">
-              <option value="">No limit</option>
-              <option value="200000">$200,000</option>
-              <option value="400000">$400,000</option>
-              <option value="700000">$700,000</option>
-              <option value="1000000">$1,000,000</option>
-            </select>
-          </label>
+                    <div class="filter-field">
+            <div class="range-head"><span>Max price</span><output id="budgetOut">No limit</output></div>
+            <input type="range" id="fBudget" min="150000" max="1250000" step="50000" value="1250000">
+            <div class="range-ends"><small>$150k</small><small>$1.25m</small></div>
+          </div>
         </div>
 
+                <div class="chip-group">
+          <span class="vibe-label">Bedrooms</span>
+          <div class="chip-row">
+            <button type="button" class="num-chip active" data-group="beds" data-value="">Any</button>
+            <button type="button" class="num-chip" data-group="beds" data-value="1">1+</button>
+            <button type="button" class="num-chip" data-group="beds" data-value="2">2+</button>
+            <button type="button" class="num-chip" data-group="beds" data-value="3">3+</button>
+            <button type="button" class="num-chip" data-group="beds" data-value="4">4+</button>
+          </div>
+        </div>
+
+        <div class="chip-group">
+          <span class="vibe-label">Bathrooms</span>
+          <div class="chip-row">
+            <button type="button" class="num-chip active" data-group="baths" data-value="">Any</button>
+            <button type="button" class="num-chip" data-group="baths" data-value="1">1+</button>
+            <button type="button" class="num-chip" data-group="baths" data-value="2">2+</button>
+            <button type="button" class="num-chip" data-group="baths" data-value="3">3+</button>
+          </div>
+        </div>
+        
         <div class="vibe-row">
           <span class="vibe-label">Your must-haves</span>
           <div class="vibe-pills">
@@ -75,6 +91,11 @@
       </aside>
 
       <div class="shop-main" id="listings">
+                <div class="search-box">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+          <input type="search" id="fSearch" placeholder="Search by name, area, type or vibe" autocomplete="off">
+                    <ul class="suggest" id="suggest" hidden></ul>
+        </div>
         <div class="section-head">
           <p class="result-count" id="resultCount"></p>
           <label class="sort">

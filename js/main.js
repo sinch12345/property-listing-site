@@ -115,15 +115,16 @@ function renderGrid(list) {
    FILTERS AND SORTING (listings.html)
    ========================================================= */
 
-const filters = { location: '', type: '', budget: '', vibe: '' };
-
+const filters = { q: '', location: '', type: '', budget: '', vibe: '', beds: '', baths: '' };
 function applyFilters(list) {
   return list.filter(p =>
     (!filters.location || p.location === filters.location) &&
     (!filters.type     || p.type === filters.type) &&
     (!filters.budget   || p.price <= Number(filters.budget)) &&
-    (!filters.vibe     || p.vibes.includes(filters.vibe))
-  );
+        (!filters.vibe     || p.vibes.includes(filters.vibe)) &&
+    (!filters.beds     || p.beds >= Number(filters.beds)) &&
+    (!filters.baths    || p.baths >= Number(filters.baths)) &&
+    (!filters.q        || [p.title, p.location, p.type, ...p.vibes].join(' ').toLowerCase().includes(filters.q.toLowerCase()))  );
 }
 
 function sortList(list, mode) {
@@ -157,11 +158,22 @@ function writeFiltersToURL() {
   } catch (e) { /* some browsers block this on local files: ignore */ }
 }
 
-/* Make the controls match the filter values */
+function drawBudget() {
+  const slider = filterBar.querySelector('#fBudget');
+  const out = filterBar.querySelector('#budgetOut');
+  out.textContent = Number(slider.value) >= Number(slider.max) ? 'No limit' : formatPrice(Number(slider.value));
+}
+
 function syncControls() {
+    document.getElementById('fSearch').value = filters.q;
   filterBar.querySelector('#fLocation').value = filters.location;
   filterBar.querySelector('#fType').value = filters.type;
-  filterBar.querySelector('#fBudget').value = filters.budget;
+  const slider = filterBar.querySelector('#fBudget');
+  slider.value = filters.budget || slider.max;
+  drawBudget();
+  filterBar.querySelectorAll('.num-chip').forEach(c => {
+    c.classList.toggle('active', filters[c.dataset.group] === c.dataset.value);
+  });
   filterBar.querySelectorAll('.vibe-pill').forEach(pill => {
     pill.classList.toggle('active', pill.dataset.vibe === filters.vibe);
   });
@@ -176,24 +188,35 @@ if (filterBar) {
   readFiltersFromURL();
   syncControls();
 
-  /* dropdowns */
   filterBar.addEventListener('change', (e) => {
     if (e.target.id === 'fLocation') filters.location = e.target.value;
     if (e.target.id === 'fType')     filters.type = e.target.value;
-    if (e.target.id === 'fBudget')   filters.budget = e.target.value;
     refresh();
   });
 
-  /* vibe pills (click again to switch off) */
+  filterBar.querySelector('#fBudget').addEventListener('input', (e) => {
+    const full = Number(e.target.value) >= Number(e.target.max);
+    filters.budget = full ? '' : e.target.value;
+    drawBudget();
+    refresh();
+  });
+
   filterBar.addEventListener('click', (e) => {
+    const chip = e.target.closest('.num-chip');
+    if (chip) {
+      filters[chip.dataset.group] = chip.dataset.value;
+      syncControls();
+      refresh();
+      return;
+    }
     const pill = e.target.closest('.vibe-pill');
-    if (!pill) return;
-    filters.vibe = filters.vibe === pill.dataset.vibe ? '' : pill.dataset.vibe;
-    syncControls();
-    refresh();
+    if (pill) {
+      filters.vibe = filters.vibe === pill.dataset.vibe ? '' : pill.dataset.vibe;
+      syncControls();
+      refresh();
+    }
   });
 
-  /* clear everything */
   document.getElementById('clearFilters').addEventListener('click', () => {
     Object.keys(filters).forEach(key => { filters[key] = ''; });
     sortBy.value = 'newest';
@@ -202,6 +225,40 @@ if (filterBar) {
   });
 
   sortBy.addEventListener('change', refresh);
+
+    const search = document.getElementById('fSearch');
+  search.addEventListener('input', () => {
+    filters.q = search.value.trim();
+    refresh();
+  });
+
+    const suggest = document.getElementById('suggest');
+  const TERMS = [...new Set(PROPERTIES.flatMap(p => [p.title, p.location, p.type, ...p.vibes]))];
+
+  function showSuggest() {
+    const q = search.value.trim().toLowerCase();
+    const hits = q ? TERMS.filter(t => t.toLowerCase().includes(q) && t.toLowerCase() !== q).slice(0, 6) : [];
+    suggest.innerHTML = hits.map(t => `<li><button type="button">${t}</button></li>`).join('');
+    suggest.hidden = !hits.length;
+  }
+
+  search.addEventListener('input', showSuggest);
+
+  search.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') suggest.hidden = true;
+  });
+
+  suggest.addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    search.value = filters.q = btn.textContent;
+    suggest.hidden = true;
+    refresh();
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-box')) suggest.hidden = true;
+  });
 }
 
 /* ---- Decide which properties this page shows ---- */
