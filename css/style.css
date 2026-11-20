@@ -3174,3 +3174,46 @@ html[data-motion="reduced"] :is(.badge, .star, .win, .pin) { animation: none; }
   #map { height: 420px; }
   .map-real { border-radius: 32px; }
 }
+
+/* ===== map-switch ===== */
+.map-switch {
+  position: absolute;
+  top: 20px;
+  left: 64px;
+  z-index: 500;
+  display: flex;
+  gap: 6px;
+  padding: 5px;
+  border-radius: 999px;
+  background: var(--paper);
+  box-shadow: var(--shadow);
+}
+
+.map-switch button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--forest);
+  cursor: pointer;
+}
+
+.map-switch button.active {
+  background: var(--forest);
+  color: var(--paper);
+}
+
+.area-tip {
+  border: none;
+  background: rgba(246, 240, 230, 0.92);
+  color: #1F3D2F;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.area-tip::before { display: none; }

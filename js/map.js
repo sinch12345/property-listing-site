@@ -36,3 +36,44 @@ PROPERTIES.forEach((p) => {
 
 document.getElementById('mapCount').textContent =
   PROPERTIES.length + ' homes across four neighborhoods';
+
+
+  function mixColor(a, b, t) {
+  const ca = a.slice(1).match(/../g).map(h => parseInt(h, 16));
+  const cb = b.slice(1).match(/../g).map(h => parseInt(h, 16));
+  return 'rgb(' + ca.map((c, i) => Math.round(c + (cb[i] - c) * t)).join(',') + ')';
+}
+
+const areas = L.layerGroup();
+const stats = Object.keys(AREAS).map(name => {
+  const list = PROPERTIES.filter(p => p.location === name);
+  const avg = list.length ? list.reduce((s, p) => s + p.price, 0) / list.length : 0;
+  return { name, count: list.length, avg };
+});
+const avgs = stats.filter(s => s.count).map(s => s.avg);
+const lo = Math.min(...avgs);
+const hi = Math.max(...avgs);
+
+stats.forEach(s => {
+  const t = hi === lo ? 0.5 : (s.avg - lo) / (hi - lo);
+  L.circle(AREAS[s.name], {
+    radius: 2600,
+    color: '#1F3D2F',
+    weight: 2,
+    fillColor: s.count ? mixColor('#DDE5D8', '#C8553D', t) : '#cccccc',
+    fillOpacity: 0.65
+  })
+    .bindTooltip(`<strong>${s.name}</strong><br>${s.count ? 'avg ' + shortPrice(s.avg) : 'no homes yet'}`,
+      { permanent: true, direction: 'center', className: 'area-tip' })
+    .on('click', () => { location.href = 'listings.html?location=' + encodeURIComponent(s.name); })
+    .addTo(areas);
+});
+
+document.getElementById('mapSwitch').addEventListener('click', (e) => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  const showAreas = btn.dataset.mode === 'areas';
+  map.removeLayer(showAreas ? pins : areas);
+  map.addLayer(showAreas ? areas : pins);
+  document.querySelectorAll('#mapSwitch button').forEach(b => b.classList.toggle('active', b === btn));
+});
