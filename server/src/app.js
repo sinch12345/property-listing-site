@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const config = require('./config');
 const db = require('./db');
+const contactRoutes = require('./routes/contact');
 
 const app = express();
 
@@ -18,6 +19,8 @@ app.get('/api/health', async (req, res) => {
     res.status(503).json({ status: 'error', database: 'down' });
   }
 });
+
+app.use('/api/contact', contactRoutes);
 app.use((req, res) => {
   res.status(404).json({ error: 'Not found' });
 });
