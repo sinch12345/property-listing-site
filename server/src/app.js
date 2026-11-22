@@ -6,6 +6,7 @@ const path = require('path');
 const contactRoutes = require('./routes/contact');
 const enquiryRoutes = require('./routes/enquiries');
 const propertyRoutes = require('./routes/properties');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads'), {
 app.use('/api/contact', contactRoutes);
 app.use('/api/enquiries', enquiryRoutes);
 app.use('/api/properties', propertyRoutes);
+app.use('/api/admin', adminRoutes);
 app.use((req, res) => {
   res.status(404).json({ error: 'Not found' });
 });
