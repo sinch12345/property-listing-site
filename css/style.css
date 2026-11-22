@@ -3288,3 +3288,11 @@ html[data-motion="reduced"] :is(.badge, .star, .win, .pin) { animation: none; }
   .hood-item { border-right: none; border-bottom: 1px solid rgba(31, 61, 47, 0.15); }
   .hood-item:last-child { border-bottom: none; }
 }
+
+/* ===== form-error ===== */
+.form-error {
+  min-height: 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--terracotta);
+}
