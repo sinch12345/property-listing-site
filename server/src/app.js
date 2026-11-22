@@ -3,6 +3,7 @@ const cors = require('cors');
 const config = require('./config');
 const db = require('./db');
 const contactRoutes = require('./routes/contact');
+const enquiryRoutes = require('./routes/enquiries');
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.get('/api/health', async (req, res) => {
 });
 
 app.use('/api/contact', contactRoutes);
+app.use('/api/enquiries', enquiryRoutes);
 app.use((req, res) => {
   res.status(404).json({ error: 'Not found' });
 });
