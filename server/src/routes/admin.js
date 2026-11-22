@@ -5,6 +5,7 @@ const { z } = require('zod');
 const config = require('../config');
 const db = require('../db');
 const requireAdmin = require('../middleware/auth');
+const limits = require('../middleware/limits');
 
 const router = express.Router();
 const DUMMY_HASH = bcrypt.hashSync('not-a-real-password', 12);
@@ -14,8 +15,7 @@ const loginSchema = z.object({
   password: z.string().min(1).max(200)
 });
 
-router.post('/login', async (req, res, next) => {
-  const parsed = loginSchema.safeParse(req.body);
+router.post('/login', async (req, res, next) => {  const parsed = loginSchema.safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({ error: 'Email and password are required' });
   }
