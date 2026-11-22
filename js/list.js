@@ -59,12 +59,12 @@ function compress(file) {
       const img = new Image();
       img.onerror = () => resolve(null);
       img.onload = () => {
-        const scale = Math.min(1, 900 / Math.max(img.width, img.height));
+        const scale = Math.min(1, 800 / Math.max(img.width, img.height));
         const canvas = document.createElement('canvas');
         canvas.width = Math.round(img.width * scale);
         canvas.height = Math.round(img.height * scale);
         canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-        resolve(canvas.toDataURL('image/jpeg', 0.72));
+        resolve(canvas.toDataURL('image/jpeg', 0.6));
       };
       img.src = reader.result;
     };
@@ -150,29 +150,52 @@ if (listForm) {
   listForm.addEventListener('change', drawPreview);
 
   /* ---- Submit: save the listing in this browser ---- */
-  listForm.addEventListener('submit', (e) => {
+    listForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const err = document.getElementById('listError');
+    const btn = listForm.querySelector('button[type="submit"]');
+    err.textContent = '';
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
 
-    const listing = buildHome();
-    listing.id = Date.now();
-    listing.added = new Date().toISOString().slice(0, 10);
-    delete listing.image;              // data.js rebuilds it from photos[0]
+    const inputs = listForm.querySelectorAll('.form-row input[type="text"], .form-row input[type="email"]');
+    const home = buildHome();
+    const res = await apiPost('/api/properties', {
+      title: val('lTitle'),
+      location: home.location,
+      type: home.type,
+      price: home.price,
+      beds: home.beds,
+      baths: home.baths,
+      area: home.area,
+      vibes: home.vibes,
+      ownerName: inputs[0].value,
+      ownerEmail: inputs[1].value
+    });
 
-    try {
-      const saved = JSON.parse(localStorage.getItem('nestora_user_listings') || '[]');
-      saved.push(listing);
-      localStorage.setItem('nestora_user_listings', JSON.stringify(saved));
-    } catch (err) {
-      photoNote.textContent = 'Could not save: browser storage is full or blocked. Try fewer photos.';
+    if (!res.ok) {
+      err.textContent = apiErrorText(res.data);
+      btn.disabled = false;
+      btn.textContent = 'Submit listing';
       return;
     }
 
+    let failed = 0;
+    for (const photo of photos) {
+      const up = await apiPost('/api/properties/' + res.data.id + '/photos', {
+        token: res.data.uploadToken,
+        photo: photo
+      });
+      if (!up.ok) failed++;
+    }
+
     listForm.innerHTML = `
-      <p class="thanks">Thank you! Your listing is live on Nestora. 🏡</p>
+      <p class="thanks"></p>
       <div class="hero-actions">
-        <a href="property.html?id=${listing.id}" class="btn btn-primary">View your listing</a>
-        <a href="listings.html" class="btn btn-ghost">Browse all homes</a>
+        <a href="listings.html" class="btn btn-primary">Browse homes</a>
       </div>`;
+    listForm.querySelector('.thanks').textContent =
+      res.data.message + (failed ? ' (' + failed + ' photo(s) could not be uploaded.)' : '') + ' 🏡';
   });
 
   drawPreview();
