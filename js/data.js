@@ -2,7 +2,7 @@
    palette = [sky top, sky bottom, ground/accent]
    image   = leave null for now; in a later step you can put "images/home1.jpg" here */
 
-const PROPERTIES = [
+const FALLBACK = [
   {
     id: 1, title: "The Sunroom Villa", location: "Lakeside", type: "Villa",
     price: 785000, beds: 4, baths: 3, area: 2400,
@@ -54,11 +54,32 @@ const PROPERTIES = [
 ];
 
 
-/* ===== Listings submitted through the "List a property" form ===== */
-try {
-  const mine = JSON.parse(localStorage.getItem('nestora_user_listings') || '[]');
-  mine.forEach(p => {
-    p.image = (p.photos && p.photos[0]) || null;   // cover photo for the cards
-    PROPERTIES.push(p);
-  });
-} catch (e) { /* storage blocked: ignore */ }
+
+
+const PROPERTIES = [];
+const API_ORIGIN = ['localhost', '127.0.0.1'].includes(location.hostname) ? 'http://localhost:3000' : '';
+const AREA_PALETTES = {
+  'Lakeside':  ['#CFDCD3', '#9DB8A6', '#1F3D2F'],
+  'Old Town':  ['#EBC9BC', '#E2B866', '#1F3D2F'],
+  'Hillcrest': ['#F3D9A4', '#C8553D', '#1F3D2F'],
+  'Harbour':   ['#DDE5D8', '#E2B866', '#C8553D']
+};
+
+(function loadProperties() {
+  let loaded = false;
+  if (API_ORIGIN) {
+    try {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', API_ORIGIN + '/api/properties?limit=100', false);
+      xhr.send();
+      if (xhr.status === 200) {
+        JSON.parse(xhr.responseText).homes.forEach((h) => {
+          const photos = h.photos.map((p) => API_ORIGIN + p);
+          PROPERTIES.push({ ...h, photos, image: photos[0] || null, palette: AREA_PALETTES[h.location] });
+        });
+        loaded = true;
+      }
+    } catch (e) {}
+  }
+  if (!loaded) FALLBACK.forEach((p) => PROPERTIES.push(p));
+})();
