@@ -26,6 +26,9 @@ const SELECT = `
          p.created_at AS added,
          COALESCE((SELECT array_agg(v.vibe ORDER BY v.vibe)
                    FROM property_vibes v WHERE v.property_id = p.id), '{}') AS vibes
+
+                            , COALESCE((SELECT array_agg('/uploads/' || f.file ORDER BY f.position)
+                     FROM property_photos f WHERE f.property_id = p.id), '{}') AS photos
   FROM properties p
   JOIN neighborhoods n ON n.id = p.neighborhood_id`;
 
@@ -40,6 +43,7 @@ function shape(r) {
     baths: r.baths,
     area: r.area,
     vibes: r.vibes,
+    photos: r.photos,
     added: r.added
   };
 }

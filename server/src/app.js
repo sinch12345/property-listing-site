@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const config = require('./config');
 const db = require('./db');
+const path = require('path');
 const contactRoutes = require('./routes/contact');
 const enquiryRoutes = require('./routes/enquiries');
 const propertyRoutes = require('./routes/properties');
@@ -22,6 +23,11 @@ app.get('/api/health', async (req, res) => {
     res.status(503).json({ status: 'error', database: 'down' });
   }
 });
+
+app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads'), {
+  maxAge: '7d',
+  setHeaders: (res) => res.set('X-Content-Type-Options', 'nosniff')
+}));
 
 app.use('/api/contact', contactRoutes);
 app.use('/api/enquiries', enquiryRoutes);
