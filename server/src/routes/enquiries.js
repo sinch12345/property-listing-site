@@ -29,10 +29,20 @@ router.post('/', async (req, res, next) => {
       return res.status(404).json({ error: 'Home not found' });
     }
 
-    const result = await db.query(
-      'INSERT INTO enquiries (property_id, name, email, message) VALUES ($1, $2, $3, $4) RETURNING id',
+        const result = await db.query(
+      `INSERT INTO enquiries (property_id, name, email, message)
+       SELECT $1, $2, $3, $4
+       WHERE NOT EXISTS (
+         SELECT 1 FROM enquiries
+         WHERE property_id = $1 AND email = $3 AND message = $4
+           AND created_at > now() - interval '10 minutes'
+       )
+       RETURNING id`,
       [propertyId, name, email, message]
     );
+    if (!result.rowCount) {
+      return res.status(409).json({ error: 'You already sent this enquiry. We will be in touch.' });
+    }
     res.status(201).json({ id: result.rows[0].id, message: 'Thank you, we will be in touch.' });
   } catch (err) {
     next(err);
