@@ -15,7 +15,12 @@ const app = express();
 app.disable('x-powered-by');
 if (config.env === 'production') app.set('trust proxy', 1);
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
-app.use(cors({ origin: config.corsOrigin }));
+app.use(cors({
+  origin: config.corsOrigin,
+  methods: ['GET', 'POST', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  maxAge: 600
+}));
 app.use('/api', limits.api);
 app.post('/api/contact', limits.forms);
 app.post('/api/enquiries', limits.forms);
