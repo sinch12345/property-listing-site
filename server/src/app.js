@@ -10,6 +10,7 @@ const app = express();
 
 app.disable('x-powered-by');
 app.use(cors({ origin: config.corsOrigin }));
+app.use('/api/properties/:id/photos', express.json({ limit: '600kb' }));
 app.use(express.json({ limit: '100kb' }));
 
 app.get('/api/health', async (req, res) => {

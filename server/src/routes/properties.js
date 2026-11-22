@@ -1,6 +1,13 @@
 const express = require('express');
 const { z } = require('zod');
 const db = require('../db');
+const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
+
+const UPLOAD_DIR = path.join(__dirname, '..', '..', 'uploads');
+fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+const sha256 = (s) => crypto.createHash('sha256').update(s).digest('hex');
 
 const router = express.Router();
 
@@ -114,6 +121,7 @@ router.post('/', async (req, res, next) => {
   }
   const h = parsed.data;
   const vibes = [...new Set(h.vibes)];
+    const token = crypto.randomBytes(24).toString('hex');
 
   const client = await db.connect();
   try {
@@ -129,21 +137,22 @@ router.post('/', async (req, res, next) => {
       return res.status(409).json({ error: 'You already submitted this listing.' });
     }
 
-    const row = await client.query(
+       const row = await client.query(
       `INSERT INTO properties
-         (title, neighborhood_id, type, price, beds, baths, area, owner_name, owner_email)
-       VALUES ($1, (SELECT id FROM neighborhoods WHERE name = $2), $3, $4, $5, $6, $7, $8, $9)
+         (title, neighborhood_id, type, price, beds, baths, area, owner_name, owner_email, upload_token_hash)
+       VALUES ($1, (SELECT id FROM neighborhoods WHERE name = $2), $3, $4, $5, $6, $7, $8, $9, $10)
        RETURNING id`,
-      [h.title, h.location, h.type, h.price, h.beds, h.baths, h.area, h.ownerName, h.ownerEmail]
+      [h.title, h.location, h.type, h.price, h.beds, h.baths, h.area, h.ownerName, h.ownerEmail, sha256(token)]
     );
     for (const vibe of vibes) {
       await client.query('INSERT INTO property_vibes (property_id, vibe) VALUES ($1, $2)', [row.rows[0].id, vibe]);
     }
 
     await client.query('COMMIT');
-    res.status(201).json({
+        res.status(201).json({
       id: Number(row.rows[0].id),
       status: 'pending',
+      uploadToken: token,
       message: 'Thank you! Your listing will go live after our team reviews it.'
     });
   } catch (err) {
@@ -151,6 +160,61 @@ router.post('/', async (req, res, next) => {
     next(err);
   } finally {
     client.release();
+  }
+});
+
+
+const photoSchema = z.object({
+  token: z.string().length(48),
+  photo: z.string().startsWith('data:image/jpeg;base64,')
+});
+
+const MAX_PHOTO_BYTES = 300 * 1024;
+const MAX_PHOTOS = 6;
+
+router.post('/:id/photos', async (req, res, next) => {
+  const id = Number(req.params.id);
+  const parsed = photoSchema.safeParse(req.body);
+  if (!Number.isInteger(id) || id < 1 || !parsed.success) {
+    return res.status(400).json({ error: 'Invalid input' });
+  }
+
+  const data = Buffer.from(parsed.data.photo.slice('data:image/jpeg;base64,'.length), 'base64');
+  if (data.length > MAX_PHOTO_BYTES) {
+    return res.status(413).json({ error: 'Photo is too large (max 300 KB)' });
+  }
+  if (data.length < 4 || data[0] !== 0xff || data[1] !== 0xd8 || data[2] !== 0xff) {
+    return res.status(400).json({ error: 'File is not a valid JPEG' });
+  }
+
+  let filePath;
+  try {
+    const home = await db.query('SELECT upload_token_hash, status FROM properties WHERE id = $1', [id]);
+    const stored = home.rowCount && home.rows[0].upload_token_hash;
+    const given = sha256(parsed.data.token);
+    const ok = stored && crypto.timingSafeEqual(Buffer.from(stored, 'hex'), Buffer.from(given, 'hex'));
+    if (!ok) return res.status(404).json({ error: 'Listing not found' });
+    if (home.rows[0].status !== 'pending') {
+      return res.status(409).json({ error: 'This listing no longer accepts photos' });
+    }
+
+    const count = await db.query('SELECT count(*)::int AS n FROM property_photos WHERE property_id = $1', [id]);
+    if (count.rows[0].n >= MAX_PHOTOS) {
+      return res.status(409).json({ error: 'Up to ' + MAX_PHOTOS + ' photos per listing' });
+    }
+
+    const file = crypto.randomUUID() + '.jpg';
+    filePath = path.join(UPLOAD_DIR, file);
+    fs.writeFileSync(filePath, data);
+    await db.query(
+      'INSERT INTO property_photos (property_id, position, file) VALUES ($1, $2, $3)',
+      [id, count.rows[0].n + 1, file]
+    );
+    res.status(201).json({ position: count.rows[0].n + 1 });
+  } catch (err) {
+    if (filePath) fs.rmSync(filePath, { force: true });
+    if (err.code === '23505') return res.status(409).json({ error: 'Please try again' });
+    next(err);
   }
 });
 
