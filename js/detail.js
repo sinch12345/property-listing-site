@@ -160,6 +160,7 @@ function renderDetail(p) {
         <input type="text" placeholder="Your name" required>
         <input type="email" placeholder="Email address" required>
         <textarea rows="3" placeholder="I'd like to view ${p.title}...">I'd like to book a viewing of ${p.title}.</textarea>
+                <p class="form-error" id="enquiryError" role="alert"></p>
         <button type="submit" class="btn btn-accent">Send enquiry</button>
       </form>
     </div>
@@ -242,9 +243,31 @@ function renderDetail(p) {
   updateCalc();
 
   /* enquiry form (front-end only) */
-  document.getElementById('enquiryForm').addEventListener('submit', (e) => {
+    const enquiryForm = document.getElementById('enquiryForm');
+  enquiryForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    e.target.outerHTML = '<p class="thanks">Thank you! We\'ll be in touch within one working day. 🏡</p>';
+    const err = document.getElementById('enquiryError');
+    const btn = enquiryForm.querySelector('button[type="submit"]');
+    const fields = enquiryForm.querySelectorAll('input, textarea');
+    err.textContent = '';
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    const res = await apiPost('/api/enquiries', {
+      propertyId: p.id,
+      name: fields[0].value,
+      email: fields[1].value,
+      message: fields[2].value
+    });
+
+    if (!res.ok) {
+      err.textContent = apiErrorText(res.data);
+      btn.disabled = false;
+      btn.textContent = 'Send enquiry';
+      return;
+    }
+    enquiryForm.outerHTML = '<p class="thanks"></p>';
+    detailRoot.querySelector('.enquire .thanks').textContent = res.data.message + ' 🏡';
   });
 
   /* similar homes */
