@@ -92,4 +92,66 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
+const createSchema = z.object({
+  title: z.string().trim().min(3, 'Title is too short').max(100),
+  location: z.enum(LOCATIONS),
+  type: z.enum(TYPES),
+  price: z.coerce.number().int().min(1).max(100000000),
+  beds: z.coerce.number().int().min(1).max(10),
+  baths: z.coerce.number().int().min(1).max(10),
+  area: z.coerce.number().int().min(1).max(100000),
+  vibes: z.array(z.enum(VIBES)).max(3, 'Pick up to 3 vibes').default([]),
+  ownerName: z.string().trim().min(1, 'Name is required').max(100),
+  ownerEmail: z.string().trim().toLowerCase().email('Enter a valid email').max(254)
+});
+
+router.post('/', async (req, res, next) => {
+  const parsed = createSchema.safeParse(req.body);
+  if (!parsed.success) {
+    const fields = {};
+    parsed.error.issues.forEach((i) => { fields[i.path[0]] = i.message; });
+    return res.status(400).json({ error: 'Invalid input', fields });
+  }
+  const h = parsed.data;
+  const vibes = [...new Set(h.vibes)];
+
+  const client = await db.connect();
+  try {
+    await client.query('BEGIN');
+
+    const dup = await client.query(
+      `SELECT 1 FROM properties
+       WHERE owner_email = $1 AND title = $2 AND created_at > now() - interval '10 minutes'`,
+      [h.ownerEmail, h.title]
+    );
+    if (dup.rowCount) {
+      await client.query('ROLLBACK');
+      return res.status(409).json({ error: 'You already submitted this listing.' });
+    }
+
+    const row = await client.query(
+      `INSERT INTO properties
+         (title, neighborhood_id, type, price, beds, baths, area, owner_name, owner_email)
+       VALUES ($1, (SELECT id FROM neighborhoods WHERE name = $2), $3, $4, $5, $6, $7, $8, $9)
+       RETURNING id`,
+      [h.title, h.location, h.type, h.price, h.beds, h.baths, h.area, h.ownerName, h.ownerEmail]
+    );
+    for (const vibe of vibes) {
+      await client.query('INSERT INTO property_vibes (property_id, vibe) VALUES ($1, $2)', [row.rows[0].id, vibe]);
+    }
+
+    await client.query('COMMIT');
+    res.status(201).json({
+      id: Number(row.rows[0].id),
+      status: 'pending',
+      message: 'Thank you! Your listing will go live after our team reviews it.'
+    });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    next(err);
+  } finally {
+    client.release();
+  }
+});
+
 module.exports = router;
