@@ -1,6 +1,6 @@
 const API_BASE = ['localhost', '127.0.0.1'].includes(location.hostname)
-  ? 'http://localhost:3000'
-  : '';
+    ? 'http://localhost:3000'
+  : 'https://property-listing-site-gx02.onrender.com';
 
 async function apiPost(path, body) {
   try {

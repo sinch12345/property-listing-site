@@ -57,8 +57,7 @@ const FALLBACK = [
 
 
 const PROPERTIES = [];
-const API_ORIGIN = ['localhost', '127.0.0.1'].includes(location.hostname) ? 'http://localhost:3000' : '';
-const AREA_PALETTES = {
+const API_ORIGIN = ['localhost', '127.0.0.1'].includes(location.hostname) ? 'http://localhost:3000' : 'https://property-listing-site-gx02.onrender.com';const AREA_PALETTES = {
   'Lakeside':  ['#CFDCD3', '#9DB8A6', '#1F3D2F'],
   'Old Town':  ['#EBC9BC', '#E2B866', '#1F3D2F'],
   'Hillcrest': ['#F3D9A4', '#C8553D', '#1F3D2F'],
